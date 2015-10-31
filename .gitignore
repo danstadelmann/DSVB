@@ -1,0 +1,17 @@
+#untracked files
+
+# ignore generated pdf files
+*.pdf
+
+
+# temporary files
+*.tmp
+*.bak
+*.swp
+
+# temporary LaTex build files
+*.synctex.gz
+*.aux
+*.log
+*.toc
+*.out
