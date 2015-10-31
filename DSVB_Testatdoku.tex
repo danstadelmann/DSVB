@@ -11,12 +11,35 @@
 \usepackage[ngermanb]{babel}		
 \usepackage{amsmath}
 \usepackage{makeidx}
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0, 0.6, 0}
+\definecolor{gray}{rgb}{0.5, 0.5, 0.5}
+\definecolor{mauve}{rgb}{0.58, 0, 0.82}
+
+% used for code insertions
+\lstset{frame=tb,
+  language=C,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
 
 \title{DSVB - Testataufgabe: Goertzel Algorithmus}
 \author{
     Roger Waltenspül \and Daniel Stadelmann
 }
-
 
 \pagestyle{headings}
 
@@ -24,34 +47,41 @@
 
 \maketitle
 \author
+\thispagestyle{empty}
 
-\subsection{Allgemeine Notation}
-Matrizen werden entweder mit grossen Buchstaben bezeichnet oder mit ihren Elementen in eckigen Klammern ausgeschrieben. \newline
-\begin{center}$ A = [a_{jk}]$\end{center}
+\newpage
+\pagenumbering{arabic}
+\section{Q1 - Q15 Format}
+Im Normalfall wird beim umrechnen ins Q15-Format ein Bitshift um 15 Stellen durchgeführt. 
+\begin{equation}\label{eq:q15format}
+	(a_{Q_{15}} * b_{Q_{15}}) \gg 15 = C_{Q_{15}}
+\end{equation}
+Dies kann jedoch zu Problemen führen, falls $a_{Q_{15}}$ oder $b_{Q_{15}}$ den Wert $2^{-15}$ annehmen. Wenn einer dieser Werte unser Koeffizient ist und wir garantieren können, dass dieser nie diesen Wert annimmt ist das Shiften um 15 Stellen nach rechts zulässig.
+In unserem Code des Goertzel-Algorithmus wird jedoch lediglich um 14 Stellen geshiftet (siehe Code unten).
+\begin{lstlisting}
+void goertzel_filter_v0 ( short int * delay, short int input, short int coefficient )
+{
+    long product;
 
-\subsection{Dimension}
-Die Dimension wird mit Anzahl Zeilen $\times$ Anzahl Spalten angegeben.\newline
-z.B. eine $2 \times 3$~Matrix \newline
-\[A = [a_{jk}]=\left( \begin{array}{ccc}
-a & b & c \\
-d & e & f  \end{array} \right)\]
+    product = ( (long) delay[1] * coefficient ) >> 14;
+    ...
+\end{lstlisting}
 
-\subsection{Transponieren einer Matrix}
-toDo
+Dies weil \ldots
 
-\subsection{Symmetrien}
-\begin{itemize}
-\item Falls $A^T = A$ dann ist A \textbf{symmetrisch}
-\item Falls $A^T = -A$ dann ist A \textbf{schief-symmetrisch}
-\end{itemize}
+\section{Q2 - v1 Goertzel Algorithmus}
 
+\section{Q3 - Signal Power Berechnung}
 
-\subsection{Rechenregeln}
-\begin{itemize}
-\item $A + B = B + A$
-\item 
-\end{itemize}
+\section{Q4 - Power Calculation Methoden im Vergleich}
 
-
+\begin{tabular}{lll}
+\hline
+   & calculation method v0 & calculation method v1 \\
+\hline
+computational effort    & blabla    & blabla  \\
+numerical robustness & blablabla  & blablabla  \\
+\hline
+\end{tabular}
 
 \end{document}
