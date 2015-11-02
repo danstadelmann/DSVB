@@ -1,0 +1,1 @@
+"../Sources/LEDFlasher.c" "../Sources/PLL.c" "../Sources/aic3204.c" "../Sources/aic3204_init.c" "../Sources/goertzel.c" "../Sources/sinewaves.c" "../Sources/stereo.c" "../Sources/usbstk5505.c" "../Sources/usbstk5505_gpio.c" "../Sources/usbstk5505_i2c.c" "../Sources/usbstk5505_led.c" 
