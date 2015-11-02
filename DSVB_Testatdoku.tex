@@ -71,6 +71,12 @@ void goertzel_filter_v0 ( short int * delay, short int input, short int coeffici
 \section{Q2 - v1 Goertzel Algorithmus}
 
 \section{Q3 - Signal Power Berechnung}
+Ausgangehend von der Gleichung (4.47) im Skript:
+\begin{flalign*}
+	P_k &= \frac{2}{N^2}(\Re(X[k]))^2 + (\Im(X[k]))^2  \\
+	P_k &= (\Re(X[k]))^2 + (\Im(X[k]))^2 \\
+	P_k &= |y_k[N]|^2 = |W_N^{-k}*y_k[N-1]+x[N]|^2
+\end{flalign*}
 
 \section{Q4 - Power Calculation Methoden im Vergleich}
 \begin{tabular}{lll}
