@@ -58,7 +58,7 @@ Im Normalfall wird beim umrechnen ins Q15-Format ein Bitshift um 15 Stellen durc
 	(a_{Q_{15}} * b_{Q_{15}}) \gg 15 = C_{Q_{15}}
 \end{equation}
 Dies kann jedoch zu Problemen führen, falls $a_{Q_{15}}$ oder $b_{Q_{15}}$ den Wert $2^{-15}$ annehmen. Wenn einer dieser Werte unser Koeffizient ist und wir garantieren können, dass dieser nie diesen Wert annimmt ist das Shiften um 15 Stellen nach rechts zulässig.
-In unserem Code des Goertzel-Algorithmus wird jedoch lediglich um 14 Stellen geshiftet (siehe Code unten).
+In unserem Code des Goertzel-Algorithmus wird jedoch lediglich um 14 Stellen geshiftet (siehe Code unten). Dies weil die Filterkoeffizienten bei uns im Code als $\frac{a_k}{2}$ definiert wurden. Ein Bitshift um eine Stelle nach rechts entspricht einer Division durch 2 und ist somit nicht mehr notwenig um ins $Q_{15}$-Format umzurechnen.
 \begin{lstlisting}
 void goertzel_filter_v0 ( short int * delay, short int input, short int coefficient )
 {
@@ -68,13 +68,19 @@ void goertzel_filter_v0 ( short int * delay, short int input, short int coeffici
     ...
 \end{lstlisting}
 
-Dies weil \ldots
-
 \section{Q2 - v1 Goertzel Algorithmus}
 
 \section{Q3 - Signal Power Berechnung}
 
 \section{Q4 - Power Calculation Methoden im Vergleich}
+\begin{tabular}{lll}
+\hline
+   & calculation method v0 & calculation method v1 \\
+\hline
+computational effort    & blabla    & blabla  \\
+numerical robustness & blablabla  & blablabla  \\
+\hline
+\end{tabular}
 
 \section{Todo's}
 \subsection{ToDo1}
@@ -100,14 +106,19 @@ Beim Todo 2 mussten die Goertzel-Koeffizienten im $Q_{15}$-Format für die jewei
 Auch hier beträgt die Abtastfrequenz \SI{8000}{\hertz} und $f_k$ ist die jeweilige Signalfrequenz.
 
 \subsection{ToDo3}
+Die Reihenfolge der Zugriffe muss ein wenig umstrukturiert werden. Zuerst wird das Produkt berechnet und der alte Wert delay[2] abgezogen werden. Anschliessend wird der delay Wert um eins geschoben und der neue Wert berechnet und an der Stelle delay[1] abgelegt. 
+\begin{lstlisting}
+void goertzel_filter_v1 ( short int * delay, short int input, short int coefficient ){
+	short int product;
 
-\begin{tabular}{lll}
-\hline
-   & calculation method v0 & calculation method v1 \\
-\hline
-computational effort    & blabla    & blabla  \\
-numerical robustness & blablabla  & blablabla  \\
-\hline
-\end{tabular}
+	product = (short int) (( (long) delay[1] * coefficient ) >> 14) - delay[2];
+
+	/* The input is divided by 128 to prevent overload */
+	delay[2] = delay[1];
+	delay[1] = (short int)( (input >> 7) + product);
+}
+\end{lstlisting}
+
+
 
 \end{document}
