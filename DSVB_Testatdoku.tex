@@ -70,8 +70,20 @@ void goertzel_filter_v0 ( short int * delay, short int input, short int coeffici
 
 \section{Q2 - v1 Goertzel Algorithmus}
 
+<<<<<<< HEAD
 Die Version 1 hat einen delay[] Lese- und Schreibzugriff weniger, daher ist sie schneller in der Berechnung und benötigt weniger Speicherplatz.
 \\\\
+=======
+\section{Q3 - Signal Power Berechnung}
+Ausgangehend von der Gleichung (4.47) im Skript:
+\begin{flalign*}
+	P_k &= \frac{2}{N^2}(\Re(X[k]))^2 + (\Im(X[k]))^2  \\
+	P_k &= (\Re(X[k]))^2 + (\Im(X[k]))^2 \\
+	P_k &= |y_k[N]|^2 = |W_N^{-k}*y_k[N-1]+x[N]|^2
+\end{flalign*}
+
+\section{Q4 - Power Calculation Methoden im Vergleich}
+>>>>>>> cd2d19b9adb66d9e95330fa20db8b1a5c6eddaa4
 \begin{tabular}{lll}
 \hline
    & calculation method v0 & calculation method v1 \\
