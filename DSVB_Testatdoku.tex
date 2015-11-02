@@ -13,7 +13,7 @@
 \usepackage{makeidx}
 \usepackage{listings}
 \usepackage{color}
-\usepackage{siunitx}
+%\usepackage{siunitx}
 
 \definecolor{dkgreen}{rgb}{0, 0.6, 0}
 \definecolor{gray}{rgb}{0.5, 0.5, 0.5}
@@ -70,6 +70,10 @@ void goertzel_filter_v0 ( short int * delay, short int input, short int coeffici
 
 \section{Q2 - v1 Goertzel Algorithmus}
 
+<<<<<<< HEAD
+Die Version 1 hat einen delay[] Lese- und Schreibzugriff weniger, daher ist sie schneller in der Berechnung und benötigt weniger Speicherplatz.
+\\\\
+=======
 \section{Q3 - Signal Power Berechnung}
 Ausgangehend von der Gleichung (4.47) im Skript mit $n=N$:
 \begin{flalign*}
@@ -82,14 +86,31 @@ Ausgangehend von der Gleichung (4.47) im Skript mit $n=N$:
 \end{flalign*}
 
 \section{Q4 - Power Calculation Methoden im Vergleich}
+>>>>>>> cd2d19b9adb66d9e95330fa20db8b1a5c6eddaa4
 \begin{tabular}{lll}
 \hline
    & calculation method v0 & calculation method v1 \\
 \hline
-computational effort    & blabla    & blabla  \\
-numerical robustness & blablabla  & blablabla  \\
+Lesezugriffe    & 3 & 2 \\
+Schreibzugriffe & 4 & 3 \\
+Total			& 7	& 5	\\
 \hline
 \end{tabular}
+\\\\
+Daraus lässt sich abschätzen um wieviel die Version 1 schneller ist.
+
+\begin{equation}\label{eq:v0 vs. v1}
+	Gewinn = (1-\frac{5}{7})*100\% = 28.6\%
+\end{equation}
+
+\section{Q3 - Signal Power Berechnung}
+
+\section{Q4 - Power Calculation Methoden im Vergleich}
+
+Die Version 1 benötigt weniger delay[] Zugriffe daher benötigt diese weniger Speicherplatz. Weiter ist sie durch weniger Speicher zugriffe schneller. \\
+Der Vorteil der Version 0 ist, dass sie nur einmal skaliernen(Bitshift) muss und das ganz am Schluss, dies erhöht die Genauigkeit.
+\\\\
+Es haben beide Versionen ihre Berechtigung, es kommt darauf an, welches Kriterium wichtiger ist.
 
 \section{Todo's}
 \subsection{ToDo1}
@@ -105,14 +126,14 @@ Der Scalingfaktor lässt sich mit folgender Formel berechnen:
 \begin{equation}\label{eq:Scalingfakt}
 	Scalingfaktor = \frac{2*(2^{15}-1)}{f_{sample}}*2^{11}
 \end{equation}
-Bei einer Samplingfrequenz von \SI{8000}{\hertz} ergibt dies einen Wert von 16777. Wichtig ist hier, dass man den Wert als long speichert (16777L). 
+Bei einer Samplingfrequenz von 8000Hz ergibt dies einen Wert von 16777. Wichtig ist hier, dass man den Wert als long speichert (16777L). 
 
 \subsection{ToDo2}
 Beim Todo 2 mussten die Goertzel-Koeffizienten im $Q_{15}$-Format für die jeweilige Frequenz berechnet werden.
 \begin{equation}\label{eq:Goertzel_Koeff}
 	\frac{a_k}{2}= \cos(2*\pi*\frac{f_k}{f_s})*2^{15}
 \end{equation}
-Auch hier beträgt die Abtastfrequenz \SI{8000}{\hertz} und $f_k$ ist die jeweilige Signalfrequenz.
+Auch hier beträgt die Abtastfrequenz 8000Hz und $f_k$ ist die jeweilige Signalfrequenz.
 
 \subsection{ToDo3}
 Die Reihenfolge der Zugriffe muss ein wenig umstrukturiert werden. Zuerst wird das Produkt berechnet und der alte Wert delay[2] abgezogen werden. Anschliessend wird der delay Wert um eins geschoben und der neue Wert berechnet und an der Stelle delay[1] abgelegt. 
@@ -128,6 +149,44 @@ void goertzel_filter_v1 ( short int * delay, short int input, short int coeffici
 }
 \end{lstlisting}
 
+\subsection{ToDo4}
+Um den $goertzel_output_power_v1$ zuberchenen wird der $Twiddle-Factor$ in Realteil und Imaginärteil benötigt. Dieser wird mittels zweier Argumente, in Q15 Format, an die Funktion Übergeben. Die beiden Argumente werden nach Figure 4.17 wie folgt berchnet.
+
+\begin{align*}
+	&twiddlefactor = W^{k}_{N} \\
+	&f_k = k\frac{fs}{N} \\\\
+	&b_{RE} =\Re{(-W^{k}_{N})} = \Re{(-e^{-j*2\pi \frac{k}{N}})}=  \Re{(-e^{-j*2\pi \frac{f_k}{f_s}})}\\
+	&b_{RE} = -cos(2\pi\frac{f_k}{f_s})\\\\
+	&b_{IM} =\Im{(-W^{k}_{N})} = \Im{(-e^{-j*2\pi \frac{k}{N}})}=  \Im{(-e^{-j*2\pi \frac{f_k}{f_s}})}\\
+	&b_{IM} = -sin(2\pi\frac{f_k}{f_s})
+\end{align*}
+\\
+Mit $f_k = DTMF$ und $f_s = 8kHz$.
+\\
+Um das die Werte in das gewünschte Format zubringen wird mit $2^{15}$ multipiziert und das Zweierkomplement gebildet, da keine neagativen Zahlen verwendet werden dürfen. Dies geschiet am einfachsten mit einer Addition von 0xFFFF.
+
+\subsection{ToDo5}
+Diese Berechnung entspricht der Grafik(4.17), ohne die skalierung mit $\frac{2}{N^2}$.
+\begin{lstlisting}
+short int goertzel_output_power_v1(short int * delay, short int b_RE, short int b_IM)
+{
+	signed int goertzel_power;
+	long real;
+	long imag;
 
 
+	real = delay[1] + (b_RE+delay[1]>>15);
+	imag = (delay[1]*b_IM)>>15;
+
+	goertzel_power = real*real + imag*imag;
+
+
+
+    /* Re-initialize delay. Also useful in event of instability */
+	delay[1] = 0;
+	delay[2] = 0;
+
+	return goertzel_power;
+}
+\end{lstlisting}
 \end{document}
