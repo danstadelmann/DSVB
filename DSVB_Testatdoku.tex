@@ -109,8 +109,8 @@ Auch hier beträgt die Abtastfrequenz \SI{8000}{\hertz} und $f_k$ ist die jeweil
 Die Reihenfolge der Zugriffe muss ein wenig umstrukturiert werden. Zuerst wird das Produkt berechnet und der alte Wert delay[2] abgezogen werden. Anschliessend wird der delay Wert um eins geschoben und der neue Wert berechnet und an der Stelle delay[1] abgelegt. 
 \begin{lstlisting}
 void goertzel_filter_v1 ( short int * delay, short int input, short int coefficient ){
+	
 	short int product;
-
 	product = (short int) (( (long) delay[1] * coefficient ) >> 14) - delay[2];
 
 	/* The input is divided by 128 to prevent overload */

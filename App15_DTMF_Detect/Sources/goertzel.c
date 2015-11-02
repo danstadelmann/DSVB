@@ -99,18 +99,13 @@ void goertzel_filter_v0 ( short int * delay, short int input, short int coeffici
 // Alternative filter implementation that uses only two taps in global array delay[]
 void goertzel_filter_v1 ( short int * delay, short int input, short int coefficient )
 {
-    long product;
-    short int temp;
+    short int product;
 
-    product = ( (long) delay[1] * coefficient ) >> 14;
+	product = (short int) (( (long) delay[1] * coefficient ) >> 14) - delay[2];
 
-    /* The input is divided by 128 to prevent overload */
-
-	delay[0] = (short int)( (input >> 7) + (short int) product - delay[2] );
-
-    /* Shuffle delay elements along one place */
+	/* The input is divided by 128 to prevent overload */
 	delay[2] = delay[1];
-	delay[1] = delay[0];
+	delay[1] = (short int)( (input >> 7) + product);
 }
 	
 
