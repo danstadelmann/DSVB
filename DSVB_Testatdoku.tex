@@ -72,7 +72,7 @@ void goertzel_filter_v0 ( short int * delay, short int input, short int coeffici
 Die Version 1 hat einen delay[] Lese- und Schreibzugriff weniger, daher ist sie schneller in der Berechnung und benötigt weniger Speicherplatz.
 
 \section{Q3 - Signal Power Berechnung}
-Ausgangehend von der Gleichung (4.47) im DSVB Skript mit $n=N$:
+Ausgehend von der Gleichung (4.47) im DSVB Skript mit $n=N$:
 \begin{flalign*}
 	P_k &= (\Re(X[k]))^2 + (\Im(X[k]))^2 = |y_k[N]|^2  \\
 	y_k[N] &= W_N^{-k}*y[N-1]+x[N] \\
@@ -83,7 +83,7 @@ Ausgangehend von der Gleichung (4.47) im DSVB Skript mit $n=N$:
 \begin{flalign*}
 	P_k &= (\Re(y_k[N]))^2 + (\Im(y_k[N]))^2 \\
 	&= (x[N]+\cos(2 \pi \frac{k}{N})*y[N-1])^2 + (\sin(2 \pi \frac{k}{N})*y[N-1])^2 \\
-	&= x[N]^2+x[N]*y[N-1]*2 \cos(2 \pi \frac{k}{N})+y[N-1]^2 *\cos(2 \pi \frac{k}{N})^2 \\
+	&= x[N]^2+x[N]*y[N-1]*2 \cos(2 \pi \frac{k}{N}) + y[N-1]^2 *\cos(2 \pi \frac{k}{N})^2 \\
 	&+ \sin(2 \pi \frac{k}{N})^2*y[N-1]^2\\
 	&= x[N]^2+x[N]*y[N-1]*\underbrace{2 \cos(2 \pi \frac{k}{N})}_\text{a} + y[N-1]^2*\underbrace{(\cos(2 \pi \frac{k}{N})^2 + \sin(2 \pi \frac{k}{N})^2)}_1 \\
 	&= x[N]^2 + y[N-1]^2 + a * x[N]*y[N-1] \\
