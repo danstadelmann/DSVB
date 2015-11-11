@@ -106,8 +106,8 @@ Daraus lässt sich abschätzen um wieviel die Version 1 schneller ist.
 \begin{equation*}\label{eq:v0 vs. v1}
 	Gewinn = (1-\frac{5}{7})*100\% = 28.6\%
 \end{equation*}
-Die Version 1 benötigt weniger delay[] Zugriffe daher benötigt diese weniger Speicherplatz. Weiter ist sie durch weniger Speicher zugriffe schneller. \\
-Der Vorteil der Version 0 ist, dass sie nur einmal skaliernen(Bitshift) muss und das ganz am Schluss, dies erhöht die Genauigkeit.
+Die Version 1 benötigt weniger delay[] Zugriffe daher benötigt diese weniger Speicherplatz. Weiter ist sie durch weniger Speicherzugriffe schneller. \\
+Der Vorteil der Version 0 ist, dass sie nur einmal skalieren (Bitshift) muss und das erst ganz am Schluss, dies erhöht die Genauigkeit.
 \\\\
 Es haben beide Versionen ihre Berechtigung, es kommt darauf an, welches Kriterium wichtiger ist.
 
@@ -173,7 +173,7 @@ short int goertzel_output_power_v1(short int * delay, short int b_RE, short int 
 	long real;
 	long imag;
 
-	real = delay[1] + (b_RE+delay[1]>>15);
+	real = delay[1] + (b_RE*delay[2]>>15);
 	imag = (delay[1]*b_IM)>>15;
 
 	goertzel_power = real*real + imag*imag;
@@ -182,7 +182,7 @@ short int goertzel_output_power_v1(short int * delay, short int b_RE, short int 
 	delay[1] = 0;
 	delay[2] = 0;
 
-	return goertzel_power;
+	return (goertzel_power<<15);
 }
 \end{lstlisting}
 \end{document}
